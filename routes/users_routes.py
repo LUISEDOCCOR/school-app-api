@@ -13,7 +13,7 @@ def create_user():
         password = request.json['password']
         role = request.json['role']
         return jsonify(user_service.create_user(name=name, email=email, password=password, role=role))
-    except:
+    except Exception as e:
         return jsonify({
             "mode": "error",
             "message": "Invalid request"
@@ -26,7 +26,7 @@ def login():
         email = request.json['email']
         password = request.json['password']
         return jsonify(user_service.login_user(name=name, email=email, password=password))
-    except:
+    except Exception as e:
         return jsonify({
             "mode": "error",
             "message": "Invalid request"

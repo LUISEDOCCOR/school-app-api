@@ -1,4 +1,6 @@
 from models.user import User
+from flask_jwt_extended import create_access_token
+
 
 roles = ["student", "teacher"]
 def verifyDataUser(name, email, password):
@@ -12,7 +14,15 @@ def verifyDataUser(name, email, password):
 def create_user(name, email, password, role):
     if verifyDataUser(name, email, password) and role in roles:
         user = User(name=name, email=email, password=password, role=role)
-        return user.createUser()
+        state = user.createUser()
+        if state["mode"] == "success":
+            jwt_token = create_access_token(identity=email)
+            return {
+                "mode": "success",
+                "message": "User created successfully",
+                "token": jwt_token
+            }
+        else: return state
     else:
         return {
             "mode": "error",
@@ -22,7 +32,15 @@ def create_user(name, email, password, role):
 def login_user(name, email, password):
     if verifyDataUser(name, email, password):
         user = User(name=name, email=email, password=password)
-        return user.login()
+        state = user.login()
+        if state["mode"] == "success":
+            jwt_token = create_access_token(identity=email)
+            return {
+                "mode": "success",
+                "message": "User logged in successfully",
+                "token": jwt_token
+            }
+        else: return state
     else:
         return {
             "mode": "error",
